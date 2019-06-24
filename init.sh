@@ -1,4 +1,5 @@
 #/bin/sh
 
-echo This is my init
-touch foo
+
+git submodule foreach --recursive git submodule sync && git submodule update --init --recursive
+
