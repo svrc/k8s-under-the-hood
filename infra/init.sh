@@ -24,7 +24,7 @@ bosh -n deploy ./cfcr.yml \
  -o ops-files/add-hostname-to-master-certificate.yml \
  -o ops-files/change-cidrs.yml \
 -o ops-files/master-kubelet.yml \
--o ops-files/disable-flannel-enable-ipam.yaml \
+-o ops-files/disable-flannel-enable-ipam.yml \
 -o ops-files/allow-privileged-containers.yml \
 -o ops-files/use-vm-extensions.yml  \
 -o ops-files/cni/calico.yml  \
