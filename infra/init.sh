@@ -7,6 +7,18 @@ cd kubo-deployment/manifests
 export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID
 export CLUSTER_HOSTNAME=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.link
 
+cat <<EOF >>$BOSH_DEPLOYMENT-cc.yml
+vm_extensions:  
+  - cloud_properties:  
+      ephemeral_external_ip: true  
+    name: $BOSH_DEPLOYMENT-master-cloud-properties  
+  - cloud_properties:  
+      ephemeral_external_ip: true  
+    name: $BOSH_DEPLOYMENT-worker-cloud-properties  
+EOF
+
+bosh -n update-config --name=$BOSH_DEPLOYMENT-cc --type=cloud ./$BOSH_DEPLOYMENT-cc.yml
+
 bosh -n deploy ./cfcr.yml \
  -o ops-files/misc/scale-to-one-az.yml \
  -o ops-files/add-hostname-to-master-certificate.yml \
