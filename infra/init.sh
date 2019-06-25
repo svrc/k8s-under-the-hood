@@ -42,4 +42,3 @@ bosh -n deploy ./cfcr.yml \
  -v first_ip_of_service_cluster_cidr=10.100.200.1 2>&1 >> ./bosh.log &
 
 MASTER_IP=$(bosh vms | grep master | cut -f4)
-echo "$MASTER_IP   $CLUSTER_HOSTNAME" >> /etc/hosts
