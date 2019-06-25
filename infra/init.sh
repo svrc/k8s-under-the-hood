@@ -5,6 +5,7 @@ git submodule foreach --recursive git submodule sync && git submodule update --i
 cd kubo-deployment/manifests
 
 export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID
+echo "export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID" >> ~/.bash_profile
 export CLUSTER_HOSTNAME=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.link
 
 cat <<EOF >>$BOSH_DEPLOYMENT-cc.yml
@@ -40,3 +41,7 @@ bosh -n deploy ./cfcr.yml \
  -v pod_network_cidr=10.200.0.0/16 \
  -v first_ip_of_service_cluster_cidr=10.100.200.1 2>&1 >> ./bosh.log &
 
+sleep 180
+
+MASTER_IP=$(bosh vms | grep master | cut -f4)
+echo "$MASTER_IP   $CLUSTER_HOSTNAME" >> /etc/hosts
