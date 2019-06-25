@@ -8,7 +8,7 @@ export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID
 export CLUSTER_HOSTNAME=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.link
 
 bosh -n deploy ./cfcr.yml \
- -o ops-files/misc/scale-to-one-az.yml
+ -o ops-files/misc/scale-to-one-az.yml \
  -o ops-files/add-hostname-to-master-certificate.yml \
  -o ops-files/change-cidrs.yml \
 -o ops-files/master-kubelet.yml \
