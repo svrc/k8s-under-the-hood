@@ -4,7 +4,7 @@ set -xu
 
 if [[ ! $(dig $CLUSTER_API A +short) ]]; then
         MASTER_VM=$(bosh vms | grep master | cut -f5)
-        bosh -n run-errand apply-specs  &
+        bosh -n run-errand apply-specs 2>&1 >> specs.log  &
         echo $GOOGLE > gc.json
         gcloud auth activate-service-account --key-file=gc.json
         gcloud config set project fe-scharlton
