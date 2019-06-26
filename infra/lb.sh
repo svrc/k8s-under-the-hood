@@ -2,6 +2,10 @@
 
 set -xu
 
+if [[ -f completed ]]; then
+  exit 0
+fi
+
 while [[ $(bosh tasks | grep $BOSH_DEPLOYMENT) ]]; do
   sleep 10
 done
@@ -21,4 +25,5 @@ if [[ ! $(dig $CLUSTER_API A +short) ]]; then
         gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "60" --type="A" "$PUBLIC_MASTER_IP"
         gcloud dns record-sets transaction execute -z k8sycf
         ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443
+        touch completed
 fi
