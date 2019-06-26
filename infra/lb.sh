@@ -16,5 +16,5 @@ if [[ ! $(dig $CLUSTER_API A +short) ]]; then
         gcloud dns record-sets transaction start -z k8sycf
         gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "300" --type="A" "$PUBLIC_MASTER_IP"
         gcloud dns record-sets transaction execute -z k8sycf
-        ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT $CLUSTER_API
+        ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443{
 fi
