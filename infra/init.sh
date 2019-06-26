@@ -8,6 +8,9 @@ echo "export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID" > ~/.bashrc
 chmod +x ~/.bashrc
 echo "export CLUSTER_HOSTNAME=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-)" >> ~/.bashrc
 echo "export CLUSTER_API=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.link" >> ~/.bashrc
+echo "cat ~/materials/infra/logo.txt" >> ~/.bashrc
+cat <<EOF >>~/.bashrc
+echo "Welcome to Kubernetes Under The Hood!   Within 10-12 minutes of first login, you'll have cluster access.  Type 'kubectl cluster-info' to confirm connectivity"
 source ~/.bashrc
 
 cat <<EOF >$BOSH_DEPLOYMENT-cc.yml
@@ -42,6 +45,8 @@ bosh -n deploy ./cfcr.yml \
  -v service_cluster_cidr=10.100.200.0/24 \
  -v pod_network_cidr=10.200.0.0/16 \
  -v first_ip_of_service_cluster_cidr=10.100.200.1
+
+bosh -n run-errand apply-specs &
 
 if [[ ! $(dig $CLUSTER_API A +short) ]]; then
 	MASTER_VM=$(bosh vms | grep master | cut -f5)
