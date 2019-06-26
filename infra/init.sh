@@ -4,11 +4,13 @@ git submodule foreach --recursive git submodule sync && git submodule update --i
 
 cd kubo-deployment/manifests
 
-export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID
-echo "export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID" >> ~/.bash_profile
-export CLUSTER_HOSTNAME=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.link
+echo "export BOSH_DEPLOYMENT=$JUPYTERHUB_CLIENT_ID" > ~/.bashrc
+chmod +x ~/.bashrc
+echo "export CLUSTER_HOSTNAME=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-)" >> ~/.bashrc
+echo "export CLUSTER_API=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.link" >> ~/.bashrc
+source ~/.bashrc
 
-cat <<EOF >>$BOSH_DEPLOYMENT-cc.yml
+cat <<EOF >$BOSH_DEPLOYMENT-cc.yml
 vm_extensions:  
   - cloud_properties:  
       ephemeral_external_ip: true  
@@ -31,7 +33,7 @@ bosh -n deploy ./cfcr.yml \
 -o ops-files/cni/calico.yml  \
 -o ops-files/misc/deployment-name.yml \
 -o ops-files/vm-types.yml \
--v api-hostname=$CLUSTER_HOSTNAME \
+-v api-hostname=$CLUSTER_API \
  -v master_vm_type=small \
  -v worker_vm_type=large \
  -v apply_addons_vm_type=micro \
@@ -39,6 +41,17 @@ bosh -n deploy ./cfcr.yml \
  -v kubedns_service_ip=10.100.200.2 \
  -v service_cluster_cidr=10.100.200.0/24 \
  -v pod_network_cidr=10.200.0.0/16 \
- -v first_ip_of_service_cluster_cidr=10.100.200.1 2>&1 >> ./bosh.log &
+ -v first_ip_of_service_cluster_cidr=10.100.200.1
 
-MASTER_IP=$(bosh vms | grep master | cut -f4)
+if [[ ! $(dig $CLUSTER_API A +short) ]]; then
+	MASTER_VM=$(bosh vms | grep master | cut -f5)
+
+	gcloud compute addresses create jupyterhub-$CLUSTER_HOSTNAME-mip --region us-west1
+	gcloud compute target-pools create jupyterhub-$CLUSTER_HOSTNAME-mpool --region us-west1
+	gcloud compute target-pools add-instances jupyterhub-$CLUSTER_HOSTNAME-mpool --instances $MASTER_VM --region us-west1
+	gcloud compute forwarding-rules create jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-west1 --ports 8443 --address jupyterhub-$CLUSTER_HOSTNAME-mip --target-pool jupypter-$CLUSTER_HOSTNAME--mpool
+	PUBLIC_MASTER_IP=$(gcloud compute forwarding-rules describe jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-west1 | grep IPAddress | cut -d" " -f2)
+	gcloud dns record-sets transaction start -z k8sycf
+	gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "300" --type="A" "34.83.254.103"
+	gcloud dns record-sets transaction execute -z k8sycf
+fi
