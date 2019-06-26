@@ -47,3 +47,5 @@ bosh -n deploy ./cfcr.yml \
  -v service_cluster_cidr=10.100.200.0/24 \
  -v pod_network_cidr=10.200.0.0/16 \
  -v first_ip_of_service_cluster_cidr=10.100.200.1 &
+
+credhub login --server 10.0.0.10:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
