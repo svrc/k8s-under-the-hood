@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/bash
 
 set -xu
 
@@ -27,5 +27,5 @@ EOF
 
 bosh -n update-config --name=$BOSH_DEPLOYMENT-cc --type=cloud ./$BOSH_DEPLOYMENT-cc.yml
 
-~/materials/infra/deploy.sh 2>&1 >> deploy.log &
+nohup ~/materials/infra/deploy.sh  &
 

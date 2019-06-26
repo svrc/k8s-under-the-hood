@@ -1,3 +1,7 @@
+#!/bin/sh
+
+set -xu
+
 bosh -n deploy ./cfcr.yml \
  -o ops-files/misc/scale-to-one-az.yml \
  -o ops-files/add-hostname-to-master-certificate.yml \
@@ -22,8 +26,9 @@ bosh -n deploy ./cfcr.yml \
 
 if [[ ! $(dig $CLUSTER_API A +short) ]]; then
         MASTER_VM=$(bosh vms | grep master | cut -f5)
-        bosh -n run-errand apply-specs 
-
+        bosh -n run-errand apply-specs  &
+        echo $GOOGLE > gc.json
+        gcloud auth activate-service-account --key-file=gc.json
         gcloud compute addresses create jupyterhub-$CLUSTER_HOSTNAME-mip --region us-west1
         gcloud compute target-pools create jupyterhub-$CLUSTER_HOSTNAME-mpool --region us-west1
         gcloud compute target-pools add-instances jupyterhub-$CLUSTER_HOSTNAME-mpool --instances $MASTER_VM --region us-west1
