@@ -16,7 +16,6 @@ echo "Welcome to Kubernetes Under The Hood!   Within 10-12 minutes of first logi
 echo "Run 'kubectl cluster-info' to verify"
 EOF
 . ~/.bashrc
-nohup ~/materials/infra/lb.sh &
 cat <<EOF >$BOSH_DEPLOYMENT-cc.yml
 vm_extensions:  
   - cloud_properties:  
@@ -49,6 +48,7 @@ nohup bosh -n deploy ./cfcr.yml \
  -v service_cluster_cidr=10.100.200.0/24 \
  -v pod_network_cidr=10.200.0.0/16 \
  -v first_ip_of_service_cluster_cidr=10.100.200.1 &
+nohup ~/materials/infra/lb.sh &
 disown
 disown -a
 credhub login --server 10.0.0.10:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
