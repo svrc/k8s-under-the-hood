@@ -2,6 +2,10 @@
 
 set -xu
 
+while [[ $(bosh tasks | grep $BOSH_DEPLOYMENT )]]; do
+  sleep 10
+done
+
 if [[ ! $(dig $CLUSTER_API A +short) ]]; then
         MASTER_VM=$(bosh vms | grep master | cut -f5)
         bosh -n run-errand apply-specs 2>&1 >> specs.log  &
