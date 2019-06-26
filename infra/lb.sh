@@ -2,6 +2,8 @@
 
 set -xu
 
+sleep 15
+
 if [[ -f completed ]]; then
   exit 0
 fi
