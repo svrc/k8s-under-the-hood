@@ -13,6 +13,7 @@ echo "export CLUSTER_API=$(echo $JUPYTERHUB_CLIENT_ID | cut -d'-' -f3-).k8s.ycf.
 echo "cat ~/materials/infra/logo.txt" >> ~/.bashrc
 cat <<EOF >>~/.bashrc
 echo "Welcome to Kubernetes Under The Hood!   Within 10-12 minutes of first login, you'll have cluster access.  Type 'kubectl cluster-info' to confirm connectivity"
+~/materials/infra/lb.sh &
 EOF
 . ~/.bashrc
 cat <<EOF >$BOSH_DEPLOYMENT-cc.yml
