@@ -2,7 +2,7 @@
 
 set -xu
 
-while [[ $(bosh tasks | grep $BOSH_DEPLOYMENT )]]; do
+while [[ $(bosh tasks | grep $BOSH_DEPLOYMENT) ]]; do
   sleep 10
 done
 
