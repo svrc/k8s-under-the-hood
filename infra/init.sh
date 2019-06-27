@@ -51,7 +51,7 @@ nohup bosh -n deploy ./cfcr.yml \
 nohup ~/materials/infra/lb.sh 2>&1 >> lb.log &
 disown
 disown -a
-credhub login --server 10.0.0.10:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
+credhub login --server 10.0.0.11:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
 
 python -m bash_kernel.install
 mkdir -p ~/.local/share/jupyter/kernels/gophernotes \

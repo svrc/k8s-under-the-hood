@@ -17,11 +17,11 @@ done
         echo $GOOGLE > gc.json
         gcloud auth activate-service-account --key-file=gc.json
         gcloud config set project fe-scharlton
-        gcloud compute addresses create jupyterhub-$CLUSTER_HOSTNAME-mip --region us-west1
-        gcloud compute target-pools create jupyterhub-$CLUSTER_HOSTNAME-mpool --region us-west1
-        gcloud compute target-pools add-instances jupyterhub-$CLUSTER_HOSTNAME-mpool --instances $MASTER_VM --instances-zone us-west1-a
-        gcloud compute forwarding-rules create jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-west1 --ports 8443 --address jupyterhub-$CLUSTER_HOSTNAME-mip --target-pool jupyterhub-$CLUSTER_HOSTNAME-mpool
-        PUBLIC_MASTER_IP=$(gcloud compute forwarding-rules describe jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-west1 | grep IPAddress | cut -d" " -f2)
+        gcloud compute addresses create jupyterhub-$CLUSTER_HOSTNAME-mip --region us-east1
+        gcloud compute target-pools create jupyterhub-$CLUSTER_HOSTNAME-mpool --region us-east1
+        gcloud compute target-pools add-instances jupyterhub-$CLUSTER_HOSTNAME-mpool --instances $MASTER_VM --instances-zone us-east1-b
+        gcloud compute forwarding-rules create jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-east1 --ports 8443 --address jupyterhub-$CLUSTER_HOSTNAME-mip --target-pool jupyterhub-$CLUSTER_HOSTNAME-mpool
+        PUBLIC_MASTER_IP=$(gcloud compute forwarding-rules describe jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-east1 | grep IPAddress | cut -d" " -f2)
         gcloud dns record-sets transaction start -z k8sycf
         gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "60" --type="A" "$PUBLIC_MASTER_IP"
         gcloud dns record-sets transaction execute -z k8sycf
