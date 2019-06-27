@@ -22,8 +22,14 @@ done
         gcloud compute target-pools add-instances jupyterhub-$CLUSTER_HOSTNAME-mpool --instances $MASTER_VM --instances-zone us-east1-b
         gcloud compute forwarding-rules create jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-east1 --ports 8443 --address jupyterhub-$CLUSTER_HOSTNAME-mip --target-pool jupyterhub-$CLUSTER_HOSTNAME-mpool
         PUBLIC_MASTER_IP=$(gcloud compute forwarding-rules describe jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-east1 | grep IPAddress | cut -d" " -f2)
-        gcloud dns record-sets transaction start -z k8sycf
-        gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "60" --type="A" "$PUBLIC_MASTER_IP"
-        gcloud dns record-sets transaction execute -z k8sycf
+        for i in {0..5}; do
+         gcloud dns record-sets transaction start -z k8sycf
+         gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "60" --type="A" "$PUBLIC_MASTER_IP"
+         gcloud dns record-sets transaction execute -z k8sycf
+         if [ ! $? -eq 0 ]; then
+          break
+         fi
+         sleep 1
+       done
         ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443
         touch completed
