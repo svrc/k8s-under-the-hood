@@ -2,16 +2,14 @@
 
 set -xu
 
-sleep 15
-
-if [[ -f completed ]]; then
-  exit 0
-fi
+sleep 10
 
 while [[ $(bosh tasks | grep $BOSH_DEPLOYMENT) ]]; do
   sleep 10
 done
 
+        credhub login --server 10.0.0.11:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
+        ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443
         MASTER_VM=$(bosh vms | grep master | cut -f5)
         bosh -n run-errand apply-specs 2>&1 >> specs.log  &
         echo $GOOGLE > gc.json
@@ -31,5 +29,3 @@ done
          fi
          sleep 1
        done
-        ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443
-        touch completed
