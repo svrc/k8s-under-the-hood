@@ -1,4 +1,4 @@
 [submodule "infra/kubo-deployment"]
 	path = infra/kubo-deployment
 	url = https://github.com/svrc-pivotal/kubo-deployment
-	branch = master_kubelets
+	branch = workshop
