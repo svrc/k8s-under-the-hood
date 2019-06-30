@@ -22,15 +22,5 @@ done
               break
              fi
              sleep 1
-            done
-        else
-          for i in {0..5}; do
-           gcloud dns record-sets transaction start -z k8sycf
-           gcloud dns record-sets transaction add -z k8sycf --name "$CLUSTER_API" --ttl "60" --type="A" "$PUBLIC_MASTER_IP"
-           gcloud dns record-sets transaction execute -z k8sycf
-           if [  $? -eq 0 ]; then
-            break
-           fi
-           sleep 1
-         done
+           done
        fi
