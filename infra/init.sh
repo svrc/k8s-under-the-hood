@@ -19,6 +19,7 @@ EOF
 cat <<EOF >$BOSH_DEPLOYMENT-cc.yml
 vm_extensions:  
   - cloud_properties:  
+      target_pool: jupyterhub-$CLUSTER_HOSTNAME-mpool
       ephemeral_external_ip: true  
     name: $BOSH_DEPLOYMENT-master-cloud-properties  
   - cloud_properties:  
@@ -27,6 +28,17 @@ vm_extensions:
 EOF
 
 bosh -n update-config --name=$BOSH_DEPLOYMENT-cc --type=cloud ./$BOSH_DEPLOYMENT-cc.yml
+
+        credhub login --server 10.0.0.11:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
+        ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443
+        MASTER_VM=$(bosh vms | grep master | cut -f5)
+        echo $GOOGLE > gc.json
+        gcloud auth activate-service-account --key-file=gc.json
+        gcloud config set project fe-scharlton
+        gcloud compute addresses create jupyterhub-$CLUSTER_HOSTNAME-mip --region us-east1
+        gcloud compute target-pools create jupyterhub-$CLUSTER_HOSTNAME-mpool --region us-east1
+
+        gcloud compute forwarding-rules create jupyterhub-$CLUSTER_HOSTNAME-mrule --region us-east1 --ports 8443 --address jupyterhub-$CLUSTER_HOSTNAME-mip --target-pool jupyterhub-$CLUSTER_HOSTNAME-mpool
 
 nohup bosh -n deploy ./cfcr.yml \
  -o ops-files/misc/scale-to-one-az.yml \
