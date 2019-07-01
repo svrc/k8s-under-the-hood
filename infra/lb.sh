@@ -27,7 +27,6 @@ elif [ ! $PUBLIC_MASTER_IP == $OLD_IP ]; then
      sleep 1
    done
 fi
-
 sleep 10
 
 while [[ $(bosh tasks | grep $BOSH_DEPLOYMENT) ]]; do
