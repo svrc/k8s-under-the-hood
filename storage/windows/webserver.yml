@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: windows-webserver
+  labels:
+    app: windows-webserver
+spec:
+  nodeSelector:
+    beta.kubernetes.io/os: windows
+  tolerations:
+  - key: "windows"
+    operator: "Equal"
+    value: "2019"
+    effect: "NoSchedule"
+  restartPolicy: Always
+  containers:
+  - image: stefanscherer/webserver-windows:latest
+    name: webserver
+    env:
+    - name: PORT
+      value: "80"
+    ports:
+    - name: http
+      containerPort: 80
