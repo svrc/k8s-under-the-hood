@@ -51,6 +51,7 @@ nohup bosh -n deploy ./cfcr.yml \
 -o ops-files/cni/calico.yml  \
 -o ops-files/misc/deployment-name.yml \
 -o ops-files/vm-types.yml \
+-o ops-files/iaas/gcp/cloud-provider.yml \
 -v api-hostname=$CLUSTER_API \
  -v master_vm_type=small \
  -v worker_vm_type=large \
@@ -59,6 +60,9 @@ nohup bosh -n deploy ./cfcr.yml \
  -v kubedns_service_ip=10.100.200.2 \
  -v service_cluster_cidr=10.100.200.0/24 \
  -v pod_network_cidr=10.200.0.0/16 \
+ -v project_id=FE-scharlton \
+ -v director_name=p-bosh \
+ -v network=bosh-1-net \
  -v first_ip_of_service_cluster_cidr=10.100.200.1 2>&1 >> bosh.log &
 nohup ~/materials/infra/lb.sh 2>&1 >> lb.log &
 disown
