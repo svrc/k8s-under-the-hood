@@ -21,8 +21,10 @@ vm_extensions:
   - cloud_properties:  
       target_pool: jupyterhub-$CLUSTER_HOSTNAME-mpool
       ephemeral_external_ip: true  
+      service_account: pks-485@fe-scharlton.iam.gserviceaccount.com
     name: $BOSH_DEPLOYMENT-master-cloud-properties  
   - cloud_properties:  
+      service_account: pks2-298@fe-scharlton.iam.gserviceaccount.com
       ephemeral_external_ip: true  
     name: $BOSH_DEPLOYMENT-worker-cloud-properties  
 EOF
