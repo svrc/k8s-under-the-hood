@@ -53,6 +53,7 @@ nohup bosh -n deploy ./cfcr.yml \
 -o ops-files/cni/calico.yml  \
 -o ops-files/misc/deployment-name.yml \
 -o ops-files/vm-types.yml \
+-o ops-files/iaas/gcp/cloud-provider.yml \
 -v api-hostname=$CLUSTER_API \
  -v master_vm_type=small \
  -v worker_vm_type=large \
