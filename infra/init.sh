@@ -31,7 +31,13 @@ EOF
 
 bosh -n update-config --name=$BOSH_DEPLOYMENT-cc --type=cloud ./$BOSH_DEPLOYMENT-cc.yml
 
-        credhub login --server 10.0.0.11:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
+        while true; do
+           credhub login --server 10.0.0.11:8844 --client-name=$BOSH_CLIENT --client-secret=$BOSH_CLIENT_SECRET --skip-tls-validation
+           retVal=$?
+           if [ $retVal -eq 0 ]; then
+              break
+           fi
+        done
         ~/materials/infra/kubo-deployment/bin/set_kubeconfig p-bosh/$BOSH_DEPLOYMENT https://$CLUSTER_API:8443
         MASTER_VM=$(bosh vms | grep master | cut -f5)
         echo $GOOGLE > gc.json
