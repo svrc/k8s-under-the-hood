@@ -56,7 +56,7 @@ nohup bosh -n deploy ./cfcr.yml \
 -o ops-files/disable-flannel-enable-ipam.yml \
 -o ops-files/allow-privileged-containers.yml \
 -o ops-files/use-vm-extensions.yml  \
--o ops-files/cni/calico.yml  \
+-o ops-files/cni/canal.yml \
 -o ops-files/misc/deployment-name.yml \
 -o ops-files/vm-types.yml \
 -o ops-files/iaas/gcp/cloud-provider.yml \
